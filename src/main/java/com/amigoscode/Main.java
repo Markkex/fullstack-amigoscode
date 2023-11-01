@@ -1,62 +1,39 @@
 package com.amigoscode;
 
+import com.amigoscode.customer.Customer;
+import com.amigoscode.customer.CustomerRepository;
+import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.context.annotation.Bean;
 
 import java.util.List;
-import java.util.Objects;
 
 
 @SpringBootApplication
-@RestController
 public class Main {
     public static void main(String[] args) {
         SpringApplication.run(Main.class, args);
     }
 
-    @GetMapping("/")
-    public GreetResponse greet()  {
-        GreetResponse response = new GreetResponse(
-                "Hello",
-                List.of("Java", "Goland", "Javascript"),
-                new Person("Marco", 28, 30_000));
-        return response;
+    @Bean
+    CommandLineRunner runner(CustomerRepository customerRepository) {
+        return args -> {
+            Customer alex = new Customer(
+
+                    "Alex",
+                    "marco@marco.com",
+                    21
+            );
+
+            Customer marco = new Customer(
+
+                    "marco",
+                    "cenas@cenas.com",
+                    21
+            );
+            List<Customer> customers = List.of(alex, marco);
+            customerRepository.saveAll(customers);
+        };
     }
-    record Person (String name, int age, double savings) {}
-    record GreetResponse(
-            String greet,
-            List<String> favProgrammingLanguages,
-            Person person
-            ) {}
-    /*class GreetResponse {
-        private final String greet;
-        GreetResponse(String greet) {
-            this.greet = greet;
-        }
-
-        public String getGreet() {
-            return greet;
-        }
-
-        public String toString() {
-            return "GreetResponse{" +
-                    "greet='" + greet + '\'' +
-                    '}';
-        }
-
-        @Override
-        public boolean equals(Object o) {
-            if (this == o) return true;
-            if (o == null || getClass() != o.getClass()) return false;
-            GreetResponse that = (GreetResponse) o;
-            return Objects.equals(greet, that.greet);
-        }
-
-        @Override
-        public int hashCode() {
-            return Objects.hash(greet);
-        }
-    }*/
 }
